@@ -19,6 +19,7 @@ return new class () extends Migration {
             $table->string('image')->nullable();
             $table->string('status', 20)->default('active');
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
