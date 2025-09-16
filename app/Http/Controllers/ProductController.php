@@ -2,34 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Status;
-use App\Models\Category;
+use App\Http\Requests\Product\StoreProductRequest;
 use App\Models\Product;
+use App\Services\ProductService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(protected ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function index(Request $request): View
     {
         $allowedSorts = ['id', 'name', 'price', 'quantity', 'status', 'description', 'category'];
         $sort = $this->validateSort($request->input('sort', 'id'), $allowedSorts, 'id');
         $direction = $this->validateDirection($request->input('direction'), 'asc');
 
-        $query = Product::with('category');
-
-        if ($sort === 'category') {
-            $query->join('categories', 'products.category_id', '=', 'categories.id')
-                ->orderBy('categories.name', $direction)
-                ->select('products.*'); // Importante: evita conflitos de colunas duplicadas
-        } else {
-            $query->orderBy($sort, $direction);
-        }
-
-        $products = $query->paginate(10);
+        $products = $this->productService->getPaginatedProducts($sort, $direction, 10);
 
         return view('product.index', compact('products', 'sort', 'direction'));
     }
@@ -39,34 +32,17 @@ class ProductController extends Controller
      */
     public function create(): View
     {
-        $categories = Category::all();
-        return view('product.create', [
-            'categories' => $categories,
-            'statuses' => Status::cases()
-        ]);
+        $data = $this->productService->getCreateFormData();
+
+        return view('product.create', $data);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:1',
-            'status' => 'required|in:' . implode(',', array_map(fn ($case) => $case->value, Status::cases())),
-            'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Max 2MB
-        ]);
-
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store("products", "public");
-            $validated['image'] = basename($path);
-        }
-
-        Product::create($validated);
+        $this->productService->createProduct($request);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
