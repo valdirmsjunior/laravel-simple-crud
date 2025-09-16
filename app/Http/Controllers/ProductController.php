@@ -13,10 +13,25 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $products = Product::with('category')->paginate(10);
-        return view('product.index', compact('products'));
+        $allowedSorts = ['id', 'name', 'price', 'quantity', 'status', 'description', 'category'];
+        $sort = $this->validateSort($request->input('sort', 'id'), $allowedSorts, 'id');
+        $direction = $this->validateDirection($request->input('direction'), 'asc');
+
+        $query = Product::with('category');
+
+        if ($sort === 'category') {
+            $query->join('categories', 'products.category_id', '=', 'categories.id')
+                ->orderBy('categories.name', $direction)
+                ->select('products.*'); // Importante: evita conflitos de colunas duplicadas
+        } else {
+            $query->orderBy($sort, $direction);
+        }
+
+        $products = $query->paginate(10);
+
+        return view('product.index', compact('products', 'sort', 'direction'));
     }
 
     /**
@@ -86,5 +101,15 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         //
+    }
+
+    private function validateSort(?string $sort, array $allowedSorts, string $default): string
+    {
+        return in_array($sort, $allowedSorts) ? $sort : $default;
+    }
+
+    private function validateDirection(?string $direction, string $default): string
+    {
+        return in_array($direction, ['asc', 'desc']) ? $direction : $default;
     }
 }

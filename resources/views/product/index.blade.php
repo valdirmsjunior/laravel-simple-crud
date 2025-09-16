@@ -3,9 +3,14 @@
 
 @section('content')
     <div class="container mt-3">
-        @if (session('success'))
+        @if (Session::has('success'))
             <div class="alert alert-success">
-                {{ session('success') }}
+                {{ Session::get('success') }}
+            </div>
+        @endif
+        @if (Session::has('error'))
+            <div class="alert alert-danger">
+                {{ Session::get('error') }}
             </div>
         @endif
         <div class="card">
@@ -34,13 +39,82 @@
                 <table class="table-striped table-hover table">
                     <thead class="text-center">
                         <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                            <th>Description</th>
+                            <th>#
+                                <a
+                                    href="{{ route('products.index', ['sort' => 'id', 'direction' => $sort === 'id' && $direction === 'asc' ? 'desc' : 'asc']) }}">
+                                    @if ($sort === 'id')
+                                        <span class="ms-2">{{ $direction === 'asc' ? '↑' : '↓' }}</span>
+                                    @else
+                                        <span class="ms-2">↕</span>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>Name
+                                <a
+                                    href="{{ route('products.index', ['sort' => 'name', 'direction' => $sort === 'name' && $direction === 'asc' ? 'desc' : 'asc']) }}">
+
+                                    @if ($sort === 'name')
+                                        <span class="ms-2">{{ $direction === 'asc' ? '↑' : '↓' }}</span>
+                                    @else
+                                        <span class="ms-2">↕</span>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>Category
+                                <a
+                                    href="{{ route('products.index', ['sort' => 'category', 'direction' => $sort === 'category' && $direction === 'asc' ? 'desc' : 'asc']) }}">
+
+                                    @if ($sort === 'category')
+                                        <span class="ms-2">{{ $direction === 'asc' ? '↑' : '↓' }}</span>
+                                    @else
+                                        <span class="ms-2">↕</span>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>Quantity
+                                <a
+                                    href="{{ route('products.index', ['sort' => 'quantity', 'direction' => $sort === 'quantity' && $direction === 'asc' ? 'desc' : 'asc']) }}">
+
+                                    @if ($sort === 'quantity')
+                                        <span class="ms-2">{{ $direction === 'asc' ? '↑' : '↓' }}</span>
+                                    @else
+                                        <span class="ms-2">↕</span>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>Price
+                                <a
+                                    href="{{ route('products.index', ['sort' => 'price', 'direction' => $sort === 'price' && $direction === 'asc' ? 'desc' : 'asc']) }}">
+
+                                    @if ($sort === 'price')
+                                        <span class="ms-2">{{ $direction === 'asc' ? '↑' : '↓' }}</span>
+                                    @else
+                                        <span class="ms-2">↕</span>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>Status
+                                <a
+                                    href="{{ route('products.index', ['sort' => 'status', 'direction' => $sort === 'status' && $direction === 'asc' ? 'desc' : 'asc']) }}">
+
+                                    @if ($sort === 'status')
+                                        <span class="ms-2">{{ $direction === 'asc' ? '↑' : '↓' }}</span>
+                                    @else
+                                        <span class="ms-2">↕</span>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>Description
+                                <a
+                                    href="{{ route('products.index', ['sort' => 'description', 'direction' => $sort === 'description' && $direction === 'asc' ? 'desc' : 'asc']) }}">
+
+                                    @if ($sort === 'description')
+                                        <span class="ms-2">{{ $direction === 'asc' ? '↑' : '↓' }}</span>
+                                    @else
+                                        <span class="ms-2">↕</span>
+                                    @endif
+                                </a>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
