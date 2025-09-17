@@ -21,10 +21,11 @@ class ProductController extends Controller
         $allowedSorts = ['id', 'name', 'price', 'quantity', 'status', 'description', 'category'];
         $sort = $this->validateSort($request->input('sort', 'id'), $allowedSorts, 'id');
         $direction = $this->validateDirection($request->input('direction'), 'asc');
+        $search = $request->input('search');
 
-        $products = $this->productService->getPaginatedProducts($sort, $direction, 10);
+        $products = $this->productService->getPaginatedProducts($sort, $direction, $search, 10);
 
-        return view('product.index', compact('products', 'sort', 'direction'));
+        return view('product.index', compact('products', 'sort', 'direction', 'search'));
     }
 
     /**
@@ -52,7 +53,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+
     }
 
     /**
@@ -78,6 +79,24 @@ class ProductController extends Controller
     {
         //
     }
+
+    public function trashedProducts(Request $request): View
+    {
+        $allowedSorts = ['id', 'name', 'price', 'quantity', 'status', 'description', 'category'];
+        $sort = $this->validateSort($request->input('sort', 'id'), $allowedSorts, 'id');
+        $direction = $this->validateDirection($request->input('direction'), 'asc');
+        $search = $request->input('search');
+        $deletedProducts = $this->productService->getTrashedProducts($search, 10);
+
+        return view('product.deleted-products', compact('deletedProducts', 'sort', 'direction', 'search'));
+    }
+
+    // public function showTrashed(int $id): View
+    // {
+    //     $product = $this->productService->getTrashedProductById($id);
+
+    //     return view('product.show', compact('product'));
+    // }
 
     private function validateSort(?string $sort, array $allowedSorts, string $default): string
     {

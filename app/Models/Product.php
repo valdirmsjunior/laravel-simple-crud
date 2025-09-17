@@ -29,4 +29,20 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image ? asset('storage/products/' . $this->image) : null;
+    }
+
+    public function scopeSearch($query, ?string $search)
+    {
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+        return $query;
+    }
 }

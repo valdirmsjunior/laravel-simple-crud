@@ -29,9 +29,9 @@ class ProductService
         $this->productRepository->create($data);
     }
 
-    public function getPaginatedProducts(string $sort, string $direction, int $perPage = 10): mixed
+    public function getPaginatedProducts(string $sort, string $direction, ?string $search, int $perPage = 10): mixed
     {
-        return $this->productRepository->getProductsWithSorting($sort, $direction, $perPage);
+        return $this->productRepository->getProductsWithSortingAndSearch($sort, $direction, $search, $perPage);
     }
 
     public function getCreateFormData(): array
@@ -40,5 +40,10 @@ class ProductService
             'categories' => $this->categoryRepository->getAllCategories(),
             'statuses' => Status::cases()
         ];
+    }
+
+    public function getTrashedProducts(?string $search, int $perPage = 10): mixed
+    {
+        return $this->productRepository->getTrashedProductsWithSearch($search, $perPage);
     }
 }
