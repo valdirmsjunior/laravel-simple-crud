@@ -54,7 +54,7 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(Product $product): View
     {
         $product = $this->productService->getProductById($product->id);
         return view('product.show', compact('product'));
@@ -63,7 +63,7 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(Product $product): View
     {
         $categories = $this->productService->getAllCategories();
         $product = $this->productService->findProductById($product->id);
@@ -80,7 +80,7 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
         $this->productService->updateProduct($request, $product->id);
 
@@ -90,9 +90,11 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): RedirectResponse
     {
-        //
+        $this->productService->deleteProduct($product->id);
+
+        return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
 
     public function trashedProducts(Request $request): View
@@ -106,12 +108,19 @@ class ProductController extends Controller
         return view('product.deleted-products', compact('deletedProducts', 'sort', 'direction', 'search'));
     }
 
-    // public function showTrashed(int $id): View
-    // {
-    //     $product = $this->productService->getTrashedProductById($id);
+    public function showTrashed(int $id): View
+    {
+        $product = $this->productService->getTrashedProductById($id);
 
-    //     return view('product.show', compact('product'));
-    // }
+        return view('product.show', compact('product'));
+    }
+
+    public function restoreProduct(int $id): RedirectResponse
+    {
+        $this->productService->restoreProduct($id);
+
+        return redirect()->route('products.trashed')->with('success', 'Product restored successfully.');
+    }
 
     private function validateSort(?string $sort, array $allowedSorts, string $default): string
     {

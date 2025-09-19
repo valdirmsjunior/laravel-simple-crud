@@ -32,8 +32,8 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col">
-                                        <a href="{{ route('products.create') }}" class="btn btn-primary float-end">Add
-                                            New</a>
+                                        <a href="{{ route('products.index') }}" class="btn btn-primary float-end">Back to
+                                            List</a>
                                     </div>
                                 </div>
                             </div>
@@ -121,12 +121,13 @@
                                     @endif
                                 </a>
                             </th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if ($deletedProducts->isEmpty())
                             <tr>
-                                <td colspan="7" class="text-center">No products found.</td>
+                                <td colspan="8" class="text-center">No products found.</td>
                             </tr>
                         @else
                             @foreach ($deletedProducts as $product)
@@ -138,16 +139,15 @@
                                     <td>${{ number_format($product->price, 2) }}</td>
                                     <td>{{ $product->status }}</td>
                                     <td>{{ $product->description }}</td>
-                                    {{-- <td>
-                                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                    <form action="{{ route('products.destroy', $product->id) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Are you sure?')">Delete</button>
-                                    </form>
-                                </td> --}}
+                                    <td>
+                                        <form action="{{ route('products.restore', $product->id) }}" method="POST"
+                                            class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-sm btn-success"
+                                                onclick="return confirm('Are you sure?')">Restore</button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         @endif

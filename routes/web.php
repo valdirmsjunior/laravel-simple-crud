@@ -18,6 +18,6 @@ Route::delete('products/{product}', [ProductController::class, 'destroy'])->name
 
 Route::get('/show-trashed-product/{id}', [ProductController::class,'showTrashed'])->name('trashed.show');
 Route::get('/deleted-products', [ProductController::class, 'trashedProducts'])->name('products.trashed');
-Route::post('/restore-product/{id}', [ProductController::class, 'restoreProduct'])->name('products.restore');
+Route::put('/restore-product/{id}', [ProductController::class, 'restoreProduct'])->name('products.restore');
 
 Route::resource('categories', CategoryController::class);

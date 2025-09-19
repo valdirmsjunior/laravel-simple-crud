@@ -52,4 +52,15 @@ class ProductRepository
 
         return $query->paginate($perPage)->withQueryString();
     }
+
+    public function getTrashedProductById(int $id): ?object
+    {
+        return Product::onlyTrashed()->findOrFail($id);
+    }
+
+    public function restore(int $id): void
+    {
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->restore();
+    }
 }

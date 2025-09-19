@@ -54,6 +54,16 @@ class ProductService
         return $this->productRepository->getTrashedProductsWithSearch($search, $perPage);
     }
 
+    public function getTrashedProductById(int $id): ?object
+    {
+        return $this->productRepository->getTrashedProductById($id);
+    }
+
+    public function restoreProduct(int $id): void
+    {
+        $this->productRepository->restore($id);
+    }
+
     public function findProductById(int $id): ?object
     {
         return $this->productRepository->findById($id);
