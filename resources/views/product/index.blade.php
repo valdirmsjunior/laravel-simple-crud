@@ -37,6 +37,9 @@
             </div>
             <div class="card-body">
                 <table class="table-striped table-hover table">
+                    @php
+                        $highlight = request()->get('highlight');
+                    @endphp
                     <thead class="text-center">
                         <tr>
                             <th scope="col" class="text-nowrap align-middle">#
@@ -125,7 +128,7 @@
                             </tr>
                         @else
                             @foreach ($products as $product)
-                                <tr class="text-justify">
+                                <tr @if ($highlight == $product->id) class="table-primary" @endif class="text-justify">
                                     <td>{{ $product->id }}</td>
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->category->name }}</td>

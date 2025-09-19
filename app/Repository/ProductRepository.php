@@ -63,4 +63,10 @@ class ProductRepository
         $product = Product::onlyTrashed()->findOrFail($id);
         $product->restore();
     }
+
+    // Return the position of the product by its ID
+    public function getProductPositionById(int $id): ?int
+    {
+        return Product::where('id', '<=', $id)->count();
+    }
 }

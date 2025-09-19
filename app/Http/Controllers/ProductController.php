@@ -13,6 +13,7 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    protected int $perPage = 10;
     public function __construct(
         protected ProductService $productService,
     ) {
@@ -26,7 +27,7 @@ class ProductController extends Controller
         $direction = $this->validateDirection($request->input('direction'), 'asc');
         $search = $request->input('search');
 
-        $products = $this->productService->getPaginatedProducts($sort, $direction, $search, 10);
+        $products = $this->productService->getPaginatedProducts($sort, $direction, $search, $this->perPage);
 
         return view('product.index', compact('products', 'sort', 'direction', 'search'));
     }
@@ -83,8 +84,9 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
         $this->productService->updateProduct($request, $product->id);
+        $page = $this->productService->getProductPage($product->id, $this->perPage);
 
-        return redirect()->route('products.index')->with('success', 'Product updated successfully.');
+        return redirect()->route('products.index', ['highlight' => $product->id, 'page' => $page])->with('success', 'Product updated successfully.');
     }
 
     /**

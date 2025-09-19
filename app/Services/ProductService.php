@@ -92,4 +92,12 @@ class ProductService
     {
         $this->productRepository->delete($id);
     }
+
+    // Retorna a página onde o produto está localizado, baseado na quantidade de itens por página.
+    public function getProductPage(int $id, int $perPage): ?int
+    {
+        $position = $this->productRepository->getProductPositionById($id);
+
+        return (int) ceil($position / $perPage);
+    }
 }
