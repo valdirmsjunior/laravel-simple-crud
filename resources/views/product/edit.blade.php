@@ -2,7 +2,7 @@
 @section('title', 'Edit Product')
 
 @section('content')
-    <div class="container mt-3">
+    <div class="container mb-5 mt-3">
         @if (Session::has('success'))
             <div class="alert alert-success">
                 {{ Session::get('success') }}
