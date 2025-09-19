@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
 use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Http\RedirectResponse;
@@ -11,8 +13,9 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function __construct(protected ProductService $productService)
-    {
+    public function __construct(
+        protected ProductService $productService,
+    ) {
         $this->productService = $productService;
     }
 
@@ -53,7 +56,8 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-
+        $product = $this->productService->getProductById($product->id);
+        return view('product.show', compact('product'));
     }
 
     /**
@@ -61,15 +65,26 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        $categories = $this->productService->getAllCategories();
+        $product = $this->productService->findProductById($product->id);
+        return view(
+            'product.edit',
+            [
+            'categories' => $categories,
+            'product' => $product,
+            'statuses' => Status::cases()
+            ]
+        );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        //
+        $this->productService->updateProduct($request, $product->id);
+
+        return redirect()->route('products.index')->with('success', 'Product updated successfully.');
     }
 
     /**

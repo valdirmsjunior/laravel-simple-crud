@@ -4,8 +4,10 @@ namespace App\Services;
 
 use App\Enums\Status;
 use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
+use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
@@ -42,8 +44,42 @@ class ProductService
         ];
     }
 
+    public function getProductById(int $id): ?object
+    {
+        return $this->productRepository->findById($id);
+    }
+
     public function getTrashedProducts(?string $search, int $perPage = 10): mixed
     {
         return $this->productRepository->getTrashedProductsWithSearch($search, $perPage);
+    }
+
+    public function findProductById(int $id): ?object
+    {
+        return $this->productRepository->findById($id);
+    }
+
+    public function getAllCategories(): mixed
+    {
+        return $this->categoryRepository->getAllCategories();
+    }
+
+    public function updateProduct(UpdateProductRequest $request, int $id): void
+    {
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            if ($request->image && Storage::disk('public')->exists($request->image)) {
+                Storage::disk('public')->delete($request->image);
+            }
+            $data['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        $this->productRepository->update($id, $data);
+    }
+
+    public function deleteProduct(int $id): void
+    {
+        $this->productRepository->delete($id);
     }
 }

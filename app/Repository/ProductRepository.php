@@ -28,6 +28,24 @@ class ProductRepository
         return Product::create($data);
     }
 
+    public function findById(int $id): ?object
+    {
+        return Product::with('category')->findOrFail($id);
+    }
+
+    public function update(int $id, array $data): ?Product
+    {
+        $product = Product::findOrFail($id);
+        $product->update($data);
+        return $product;
+    }
+
+    public function delete(int $id): void
+    {
+        $product = Product::findOrFail($id);
+        $product->delete();
+    }
+
     public function getTrashedProductsWithSearch(?string $search, int $perPage): mixed
     {
         $query = Product::onlyTrashed()->search($search);
